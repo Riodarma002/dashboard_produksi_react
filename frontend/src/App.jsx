@@ -186,7 +186,7 @@ function App() {
     const rotateTimer = setInterval(() => {
       pitIndexRef.current = (pitIndexRef.current + 1) % PITS.length;
       setPit(PITS[pitIndexRef.current]);
-    }, 30000); // 30 seconds for comfortable reading
+    }, 20000); // 20 seconds for comfortable reading
     return () => clearInterval(rotateTimer);
   }, [autoPlay]);
 
