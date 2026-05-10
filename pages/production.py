@@ -195,17 +195,19 @@ else:
 st.markdown("### Dashboard Produksi")
 
 # Info row
-col_info, col_pit, col_controls = st.columns([2, 3.5, 0.5], gap="small", vertical_alignment="center")
+col_info, col_label, col_pit, col_controls = st.columns([1.5, 0.4, 3.6, 0.5], gap="small", vertical_alignment="center")
 
 with col_info:
     st.markdown(f"""
-    <div style="display: flex; gap: 0.75rem; align-items: center;">
-        <div style="background: #f1f5f9; padding: 0.5rem 1rem; border-radius: 0.5rem; border: 1px solid #e2e8f0; font-size: 0.875rem; font-weight: 600; color: #475569;">
-            Area: <strong>{display_jo}</strong>
-        </div>
-        <div style="background: #e0f2fe; padding: 0.5rem 1rem; border-radius: 0.5rem; border: 1px solid #bae6fd; font-size: 0.8125rem; font-weight: 600; color: #0369a1;">
-            {last_input_str}
-        </div>
+    <div style="background: #e0f2fe; padding: 0.5rem 1rem; border-radius: 0.5rem; border: 1px solid #bae6fd; font-size: 0.8125rem; font-weight: 600; color: #0369a1; width: max-content;">
+        {last_input_str}
+    </div>
+    """, unsafe_allow_html=True)
+
+with col_label:
+    st.markdown("""
+    <div style="text-align: right; font-size: 15px; font-weight: 500; color: #1e293b; padding-right: 4px;">
+        Area:
     </div>
     """, unsafe_allow_html=True)
 

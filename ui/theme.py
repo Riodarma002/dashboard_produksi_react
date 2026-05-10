@@ -324,64 +324,91 @@ def inject_theme():
         display: flex !important;
         align-items: center !important;
     }
-    /* ── MODERN UNDERLINE TABS: ABSOLUTE OVERRIDE ── */
-    /* This block targets ALL segmented controls with extreme priority */
-    /* ── MODERN UNDERLINE TABS: GLOBAL CLEAN DESIGN ── */
-    div[data-testid="stSegmentedControl"],
-    div[data-baseweb="segmented-control"] {
-        background: transparent !important;
-        border: none !important;
+    /* ── SEGMENTED CONTROL: PILL DESIGN DENGAN KONTRAS JELAS ── */
+    
+    /* 1. KOSONGKAN SEMUA WARNA BAWAAN STREAMLIT (HANCURKAN TEMA BIRU) */
+    div[data-testid="stSegmentedControl"] * {
+        background-color: transparent !important;
+        border-color: transparent !important;
         box-shadow: none !important;
-        padding: 0 !important;
+    }
+
+    /* 2. WARNAI CONTAINER UTAMA ABU-ABU */
+    div[data-testid="stSegmentedControl"] {
+        background-color: #f4f6f8 !important; /* Abu-abu terang */
+        border: 1px solid #e2e8f0 !important;
+        border-radius: 8px !important;
+        padding: 4px !important;
+        display: inline-flex !important;
+        min-height: 48px !important;
+    }
+
+    /* 3. SET TEKS INACTIVE */
+    div[data-testid="stSegmentedControl"] p,
+    div[data-testid="stSegmentedControl"] span {
+        font-size: 15px !important;
+        font-weight: 500 !important;
+        color: #475569 !important; /* Teks abu-abu gelap */
         margin: 0 !important;
+        line-height: 1 !important;
+    }
+
+    /* 4. SET ITEM WRAPPER/LABEL */
+    div[data-testid="stSegmentedControl"] label,
+    div[data-testid="stSegmentedControl"] div[role="radio"],
+    div[data-testid="stSegmentedControl"] div[role="tab"] {
+        border-radius: 6px !important;
+        margin: 0 2px !important;
+        cursor: pointer !important;
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
-        min-height: 46px !important;
+        border: 1px solid transparent !important; /* override the * reset */
     }
 
-    div[data-testid="stSegmentedControl"] button,
-    div[data-baseweb="segmented-control"] button {
-        background: transparent !important;
-        border: none !important;
-        border-bottom: 3px solid transparent !important;
-        border-radius: 0 !important;
-        box-shadow: none !important;
-        height: 44px !important;
+    /* Beri padding ke child pertama di bawah label agar rapi */
+    div[data-testid="stSegmentedControl"] label > div,
+    div[data-testid="stSegmentedControl"] div[role="radio"] > div,
+    div[data-testid="stSegmentedControl"] div[role="tab"] > div {
+        padding: 8px 16px !important;
         margin: 0 !important;
-        padding: 4px 16px !important;
-        color: #64748b !important;
-        font-weight: 600 !important;
+        border-radius: 6px !important;
         transition: all 0.2s ease-in-out !important;
-        flex: 1 !important;
+        border: 1px solid transparent !important; /* override the * reset */
     }
 
-    /* Active State: Bold Green Text + Underline */
-    div[data-testid="stSegmentedControl"] button[aria-checked="true"],
-    div[data-baseweb="segmented-control"] button[aria-checked="true"] {
-        background: transparent !important;
-        border-bottom: 3px solid #16a34a !important;
-        color: #16a34a !important;
+    /* 5. WARNAI MARKER AKTIF (PUTIH BUKAN BIRU) */
+    div[data-testid="stSegmentedControl"] label:has(input:checked) > div,
+    div[data-testid="stSegmentedControl"] label[data-checked="true"] > div,
+    div[data-testid="stSegmentedControl"] div[role="radio"][aria-checked="true"] > div,
+    div[data-testid="stSegmentedControl"] div[role="radio"][data-checked="true"] > div,
+    div[data-testid="stSegmentedControl"] div[role="tab"][aria-selected="true"] > div {
+        background-color: #ffffff !important; /* MARKER PUTIH MUTLAK */
+        border: 1px solid #cbd5e1 !important;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important;
     }
 
-    div[data-testid="stSegmentedControl"] button[aria-checked="true"] p,
-    div[data-baseweb="segmented-control"] button[aria-checked="true"] p {
-        color: #16a34a !important;
-        font-weight: 700 !important;
+    /* 6. SET TEKS AKTIF (BIRU GELAP & BOLD) */
+    div[data-testid="stSegmentedControl"] label:has(input:checked) p,
+    div[data-testid="stSegmentedControl"] label:has(input:checked) span,
+    div[data-testid="stSegmentedControl"] label[data-checked="true"] p,
+    div[data-testid="stSegmentedControl"] label[data-checked="true"] span,
+    div[data-testid="stSegmentedControl"] div[role="radio"][aria-checked="true"] p,
+    div[data-testid="stSegmentedControl"] div[role="radio"][aria-checked="true"] span,
+    div[data-testid="stSegmentedControl"] div[role="radio"][data-checked="true"] p,
+    div[data-testid="stSegmentedControl"] div[role="tab"][aria-selected="true"] p,
+    div[data-testid="stSegmentedControl"] div[role="tab"][aria-selected="true"] span {
+        color: #032b43 !important; /* Teks gelap kontras */
+        font-weight: 800 !important; /* FONT BOLD */
+        font-size: 16px !important;
     }
 
-    div[data-testid="stSegmentedControl"] button:hover:not([aria-checked="true"]) {
-        background: rgba(22, 163, 74, 0.05) !important;
-        color: #1e293b !important;
-    }
-
-    /* Kill standard boxes */
-    div[data-testid="stSegmentedControl"] button div,
-    div[data-baseweb="segmented-control"] button div {
-        background: transparent !important;
-        border: none !important;
-        box-shadow: none !important;
-        color: inherit !important;
+    /* 7. HOVER STATE UNTUK INACTIVE */
+    div[data-testid="stSegmentedControl"] label:not(:has(input:checked)):hover > div,
+    div[data-testid="stSegmentedControl"] div[role="radio"][aria-checked="false"]:hover > div,
+    div[data-testid="stSegmentedControl"] div[role="radio"]:not([data-checked="true"]):hover > div,
+    div[data-testid="stSegmentedControl"] div[role="tab"]:not([aria-selected="true"]):hover > div {
+        background-color: #e2e8f0 !important;
     }
     .header-title {
         color: #1e293b;

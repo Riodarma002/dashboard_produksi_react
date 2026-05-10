@@ -12,19 +12,10 @@ from pathlib import Path
 # Load environment variables from .env file
 load_dotenv()
 
-import streamlit as st
-
 # ── Environment Variable Validation ───────────────────────────
 def validate_environment():
     """
     Validate that all required environment variables are set.
-
-    Raises:
-        ValueError: If any required environment variable is missing
-        SystemExit: If validation fails
-
-    Returns:
-        bool: True if all validations pass
     """
     required_vars = {
         "AZURE_TENANT_ID": "Azure AD Tenant ID",
@@ -35,14 +26,15 @@ def validate_environment():
     missing_vars = []
 
     for var_name, description in required_vars.items():
-        # Specifically try to check Streamlit Secrets too if missing from os.getenv
-        # This helps Streamlit Cloud users
         value = os.getenv(var_name)
+        
+        # Check Streamlit Secrets if available
         if not value:
             try:
+                import streamlit as st
                 if var_name in st.secrets:
                     value = st.secrets[var_name]
-                    os.environ[var_name] = value  # Sync it back to env for other libraries
+                    os.environ[var_name] = value
             except:
                 pass
                 
@@ -50,14 +42,16 @@ def validate_environment():
             missing_vars.append(f"• {var_name}: {description}")
 
     if missing_vars:
-        error_msg = (
-            "🚨 **Missing Required Cloud Secrets/Environment Variables**\n\n"
-            + "\n".join(missing_vars) +
-            "\n\nIf you are on Streamlit Cloud, please add these to **Settings > Secrets**. "
-            "If local, please ensure your `.env` file is loaded."
-        )
-        st.error(error_msg)
-        st.stop()
+        error_msg = "Missing Required Environment Variables:\n" + "\n".join(missing_vars)
+        print(error_msg)
+        # Only use st.error if streamlit is actually running
+        try:
+            import streamlit as st
+            if st._is_running_with_streamlit:
+                st.error(error_msg)
+                st.stop()
+        except:
+            pass
 
     return True
 
@@ -65,16 +59,21 @@ def validate_environment():
 validate_environment()
 
 # ── OneDrive Links ────────────────────────────────────────────
-# Updated 2026-03-15: New db_hourly_report file with different structure
 ONEDRIVE_LINKS = {
     "db_hourly": "https://mgeid-my.sharepoint.com/:x:/r/personal/planning_department_mgeid_onmicrosoft_com/Documents/Dashboard_all/db%20Production%20Hourly%20(final).xlsx?d=w24cf5b9c64854d42915913d3e7671764&csf=1&web=1&e=bKZhbL",
     "plan_hourly": "https://mgeid-my.sharepoint.com/:x:/g/personal/planning_department_mgeid_onmicrosoft_com/IQBK3837O3nsR5AKLRsno8PGARKNx5EqiQV3IbnLXQayihk?e=BxFbTc",
 }
 
 # ── Cache Settings ────────────────────────────────────────────
-CACHE_TTL_SECONDS = 60   # 1 minute - Near-real-time refresh
-SYNC_INTERVAL = 60       # 1 minute (background sync)
-CACHE_FILE = "data/cache.pkl"
+CACHE_TTL_SECONDS = 60
+SYNC_INTERVAL = 60
+# Vercel has a read-only filesystem except for /tmp
+if os.getenv("VERCEL"):
+    CACHE_FILE = "/tmp/cache.pkl"
+else:
+    CACHE_FILE = "data/cache.pkl"
+    # Ensure data directory exists locally
+    Path("data").mkdir(parents=True, exist_ok=True)
 
 # ── Azure AD / Microsoft Graph API ─────────────────────────────
 # All Azure credentials must be set in .env file or Streamlit Secrets (validated above)

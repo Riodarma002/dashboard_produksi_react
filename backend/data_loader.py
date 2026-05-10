@@ -89,6 +89,15 @@ def load_data(force_refresh: bool = False) -> dict:
         except Exception as e:
             logger.error(f"Fallback download for {name} failed: {e}")
             continue
+    # 4. Save to cache so next requests use it
+    try:
+        if result:
+            with open(CACHE_FILE, "wb") as f:
+                pickle.dump(result, f)
+            logger.info("Successfully updated local cache file.")
+    except Exception as e:
+        logger.error(f"Failed to save to cache: {e}")
+
     return result
 
 

@@ -109,7 +109,7 @@ def build_cumm_chart(
             xref="paper", yref="y",
             text=f"<b>Plan: {fmt(plan_daily_val)}</b>",
             showarrow=False,
-            font=dict(size=14, color=colors["line"], family="Rubik"),
+            font=dict(size=18, color=colors["line"], family="Rubik"),
             bgcolor="rgba(255, 255, 255, 0.7)",
             xanchor="left", yanchor="bottom"
         )
@@ -144,8 +144,8 @@ def build_cumm_chart(
                 customdata=hover_texts,
                 mode="lines+markers",
                 name="Actual (dalam K)",
-                line=dict(color=colors["line"], width=2.5, shape="spline", smoothing=1.3),
-                marker=dict(size=7, color=marker_colors, line=dict(color="#fff", width=1.5)),
+                line=dict(color=colors["line"], width=3, shape="spline", smoothing=1.3),
+                marker=dict(size=9, color=marker_colors, line=dict(color="#fff", width=2)),
                 hovertemplate="Actual<br><b>%{customdata}</b><extra></extra>",
             )
         )
@@ -159,9 +159,9 @@ def build_cumm_chart(
                 y=val,
                 text=f"<b>{val/1000:.1f}</b>",
                 showarrow=False,
-                yshift=14, # Sedikit dinaikkan agar tidak menabrak titik jika font lebih besar
-                font=dict(size=14, color=text_colors[idx], family="Rubik"),
-                opacity=0.9
+                yshift=22,
+                font=dict(size=18, color=text_colors[idx], family="Rubik"),
+                opacity=0.95
             )
 
         # Last point highlight
@@ -174,7 +174,7 @@ def build_cumm_chart(
                 x=[x_coords[-1]],
                 y=[last["Cumm_Actual"]],
                 mode="markers",
-                marker=dict(size=10, color=dot_color, line=dict(color="#fff", width=1.5)),
+                marker=dict(size=13, color=dot_color, line=dict(color="#fff", width=2)),
                 showlegend=False,
                 hoverinfo="skip",
             )
@@ -194,29 +194,29 @@ def build_cumm_chart(
         # Title — own row at top
         fig.add_annotation(
             xref="paper", yref="paper", x=0, y=1.20,
-            text=f"<span style='font-size:16px;color:#1a1f36;font-weight:bold;'>{title}</span>",
+            text=f"<span style='font-size:18px;color:#1a1f36;font-weight:bold;'>{title}</span>",
             showarrow=False, align="left", xanchor="left", yanchor="bottom"
         )
 
         # Stats row — right side, below title
         n_stats = len(summary_stats)
         for i, stat in enumerate(summary_stats):
-            x_pos = 0.56 + (i / max(n_stats - 1, 1)) * 0.42
+            x_pos = 0.52 + (i / max(n_stats - 1, 1)) * 0.48
             
             # Value + Label combined
             fig.add_annotation(
                 xref="paper", yref="paper", x=x_pos, y=1.12,
                 text=(
-                    f"<span style='font-size:9px;color:#64748b;font-weight:600;'>{stat['label']}</span>"
+                    f"<span style='font-size:11px;color:#64748b;font-weight:600;'>{stat['label']}</span>"
                     f"<br>"
-                    f"<span style='font-size:15px;color:{stat['color']};font-weight:bold;'>{stat['value']}</span>"
+                    f"<span style='font-size:18px;color:{stat['color']};font-weight:bold;'>{stat['value']}</span>"
                 ),
                 showarrow=False, align="center", xanchor="center", yanchor="bottom"
             )
             # Sub-label
             fig.add_annotation(
                 xref="paper", yref="paper", x=x_pos, y=1.04,
-                text=f"<span style='font-size:8px;color:#94a3b8;'>{stat['sub']}</span>",
+                text=f"<span style='font-size:10px;color:#94a3b8;'>{stat['sub']}</span>",
                 showarrow=False, align="center", xanchor="center", yanchor="bottom"
             )
 
@@ -253,38 +253,37 @@ def build_cumm_chart(
             )
 
     fig.update_layout(
-        height=420,  # Restored height to give breathing room for rainfall bars below
-        autosize=True,
+        height=540,
+        autosize=False,
+        width=1050,
         plot_bgcolor="rgba(0,0,0,0)",
         paper_bgcolor="rgba(0,0,0,0)",
         xaxis=dict(
             tickmode="array", tickvals=list(range(len(OP_HOURS))), ticktext=OP_HOURS,
             range=[-0.5, len(OP_HOURS) - 0.5], showgrid=False,
             linecolor="#e5e7eb", linewidth=1,
-            tickfont=dict(size=12, color="#475569", family="Rubik"),
+            tickfont=dict(size=14, color="#475569", family="Rubik"),
         ),
         yaxis=dict(
             showgrid=True, gridcolor="#f3f4f6", gridwidth=1,
             zeroline=False, showline=False,
-            tickfont=dict(size=12, color="#9ca3af", family="Rubik"),
-            # RAISED LINE: start at negative to leave room for bars (reduced gap)
-            range=[-y_max * 0.25, y_max * 1.30],
-            title=dict(text=y_label, font=dict(size=12, color="#64748b")),
+            tickfont=dict(size=14, color="#9ca3af", family="Rubik"),
+            range=[-y_max * 0.28, y_max * 1.35],
+            title=dict(text=y_label, font=dict(size=14, color="#64748b")),
         ),
         yaxis2=dict(
-            title=dict(text="Rain (hrs)", font=dict(color="rgba(14, 165, 233, 1)", size=9)),
-            tickfont=dict(color="rgba(14, 165, 233, 1)", size=7),
+            title=dict(text="Rain (hrs)", font=dict(color="rgba(14, 165, 233, 1)", size=11)),
+            tickfont=dict(color="rgba(14, 165, 233, 1)", size=10),
             anchor="x", overlaying="y", side="right",
-            # SCALE BARS: Tighter range brings them closer to the line
             range=[0, 8], showgrid=False,
         ),
         legend=dict(
             orientation="h", y=-0.12,
-            font=dict(size=10, color="#6b7280", family="Rubik"),
+            font=dict(size=13, color="#6b7280", family="Rubik"),
             bgcolor="rgba(0,0,0,0)",
             traceorder="normal",
         ),
-        margin=dict(t=110, b=40, r=35, l=50),
+        margin=dict(t=120, b=45, r=45, l=55),
         font=dict(family="Rubik"),
     )
 
@@ -294,7 +293,7 @@ def build_cumm_chart(
         x=-0.01, y=-0.06,
         text="Time (WITA)",
         showarrow=False,
-        font=dict(size=9, color="#475569", family="Rubik"),
+        font=dict(size=11, color="#475569", family="Rubik"),
         xanchor="right",
         yanchor="middle"
     )
@@ -303,10 +302,10 @@ def build_cumm_chart(
     unit_note = "● Angka titik = K (ribuan MT)" if palette == "ch" else "● Angka titik = K (ribuan BCM)"
     fig.add_annotation(
         xref="paper", yref="paper",
-        x=1.0, y=-0.14,  # Diturunkan sedikit dari -0.12 ke -0.14 agar sejajar horizontal dengan legend
+        x=1.0, y=-0.14,
         text=f"<i>{unit_note}</i>",
         showarrow=False,
-        font=dict(size=8, color="#94a3b8", family="Rubik"),
+        font=dict(size=10, color="#94a3b8", family="Rubik"),
         xanchor="right",
         yanchor="middle"
     )
@@ -331,39 +330,86 @@ def _get_last_hour_idx(df, value_col: str) -> int:
 def render_production_charts(
     ob_f, ch_f, cumm_pit, plan_ob_val: float, plan_ch_val: float, rain_f: pd.DataFrame = None
 ):
-    """Render OB and CH cumulative charts side-by-side."""
+    """Render OB and CH cumulative charts side-by-side with horizontal scroll."""
     st.markdown('<div style="height:16px;"></div>', unsafe_allow_html=True)
 
     # Compute OB's last reported hour index to sync CH's time horizon
     ob_last_idx = _get_last_hour_idx(ob_f, "Volume")
 
+    fig_ob = build_cumm_chart(
+        ob_f, "Volume", "Cumm OB", plan_ob_val,
+        "Cumulative OB Production", "BCM",
+        cumm_pit, palette="ob",
+        rain_df=rain_f
+    )
+    fig_ch = build_cumm_chart(
+        ch_f, "Volume", "Cumm CH", plan_ch_val,
+        "Cumulative Coal Hauling", "MT",
+        cumm_pit, convert_kg=False, palette="ch",
+        rain_df=rain_f,
+        min_last_idx=ob_last_idx,
+    )
+
+    # ── Horizontal scroll wrapper ──────────────────────────────────────────
+    # Each chart is fixed 1050px wide → total inner = 2120px (1050+1050+20px gap)
+    # The outer div clips at 100% and allows horizontal scroll.
+    st.markdown(
+        """
+        <style>
+        .chart-scroll-wrapper {
+            overflow-x: auto;
+            overflow-y: visible;
+            width: 100%;
+            padding-bottom: 8px;
+        }
+        .chart-scroll-wrapper::-webkit-scrollbar {
+            height: 8px;
+        }
+        .chart-scroll-wrapper::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 4px;
+        }
+        .chart-scroll-wrapper::-webkit-scrollbar-thumb {
+            background: #94a3b8;
+            border-radius: 4px;
+        }
+        .chart-scroll-wrapper::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+        }
+        .chart-inner-row {
+            display: flex;
+            gap: 20px;
+            min-width: 2120px;
+        }
+        .chart-cell {
+            flex: 0 0 1050px;
+            width: 1050px;
+        }
+        </style>
+        <div class="chart-scroll-wrapper">
+            <div class="chart-inner-row">
+                <div class="chart-cell" id="ob-chart-cell"></div>
+                <div class="chart-cell" id="ch-chart-cell"></div>
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
     col_ob, col_ch = st.columns(2, gap="small")
 
     with col_ob:
-        fig_ob = build_cumm_chart(
-            ob_f, "Volume", "Cumm OB", plan_ob_val,
-            "Cumulative OB Production", "BCM",
-            cumm_pit, palette="ob",
-            rain_df=rain_f
-        )
         st.plotly_chart(
-            fig_ob, 
-            key="chart_ob_cumm", 
-            use_container_width=True, 
-            config={"responsive": True, "displayModeBar": False}
+            fig_ob,
+            key="chart_ob_cumm",
+            use_container_width=False,
+            config={"responsive": False, "displayModeBar": False}
         )
 
     with col_ch:
-        fig_ch = build_cumm_chart(
-            ch_f, "Volume", "Cumm CH", plan_ch_val,
-            "Cumulative Coal Hauling", "MT",
-            cumm_pit, convert_kg=False, palette="ch",
-            rain_df=rain_f,
-            min_last_idx=ob_last_idx,
-        )
         st.plotly_chart(
-            fig_ch, 
-            key="chart_ch_cumm", 
-            use_container_width=True, 
-            config={"responsive": True, "displayModeBar": False}
+            fig_ch,
+            key="chart_ch_cumm",
+            use_container_width=False,
+            config={"responsive": False, "displayModeBar": False}
         )
